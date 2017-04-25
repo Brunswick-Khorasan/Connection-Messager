@@ -18,7 +18,7 @@ public class ClientGUI extends JFrame {
 		new ClientGUI();
 	}
 	public ClientGUI() {
-		ConnectionClient.start();
+		ConnectionClient.start("localhost");
 		setTitle("Messager Client");
 		JTextField input = new JTextField(50);
 		input.addActionListener(new ActionListener() {

@@ -16,9 +16,9 @@ import java.net.UnknownHostException;
 public class ConnectionClient {
 	public static final int PORTNUM = 3576;
 	private static Socket connect;
-	public static void start() {
+	public static void start(String host) {
 		try (
-				Socket c = new Socket("localhost", PORTNUM);
+				Socket c = new Socket(host, PORTNUM);
 				PrintWriter out =
 						new PrintWriter(c.getOutputStream(), true);
 				BufferedReader in =
