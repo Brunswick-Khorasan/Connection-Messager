@@ -15,17 +15,19 @@ import java.net.UnknownHostException;
  */
 public class ConnectionClient {
 	public static final int PORTNUM = 3576;
-	public static void main(String[] args) {
+	private static Socket connect;
+	public static void start() {
 		try (
-				Socket echoSocket = new Socket("localhost", PORTNUM);
+				Socket c = new Socket("localhost", PORTNUM);
 				PrintWriter out =
-						new PrintWriter(echoSocket.getOutputStream(), true);
+						new PrintWriter(c.getOutputStream(), true);
 				BufferedReader in =
 						new BufferedReader(
-								new InputStreamReader(echoSocket.getInputStream()));
+								new InputStreamReader(c.getInputStream()));
 				BufferedReader stdIn =
 						new BufferedReader(
 								new InputStreamReader(System.in))) {
+			connect = c;
 			Thread getConsoleMessage = new Thread() {
 				public void run() {
 					while (true) {
@@ -45,5 +47,8 @@ public class ConnectionClient {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	public static Socket getSocket() {
+		return connect;
 	}
 }
