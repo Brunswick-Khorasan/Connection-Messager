@@ -6,38 +6,37 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ConnectException;
 import java.net.Socket;
+import java.net.SocketException;
 import java.net.UnknownHostException;
 
 /**
  * The client for the messenger application
+ * 
  * @author Morgan
  *
  */
 public class ConnectionClient {
 	public static final int PORTNUM = 3576;
 	private static Socket connect;
+
 	public static void start(String host) {
-		try (
-				Socket c = new Socket(host, PORTNUM);
-				PrintWriter out =
-						new PrintWriter(c.getOutputStream(), true);
-				BufferedReader in =
-						new BufferedReader(
-								new InputStreamReader(c.getInputStream()));
-				BufferedReader stdIn =
-						new BufferedReader(
-								new InputStreamReader(System.in))) {
-			connect = c;
-			Thread getConsoleMessage = new Thread() {
-				public void run() {
-					while (true) {
-					try {
-						System.out.println(in.readLine());
-					} catch (IOException e) {}
-					}
+		try {
+			connect = new Socket(host, PORTNUM);
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		try (PrintWriter out = new PrintWriter(connect.getOutputStream(), true);
+				BufferedReader in = new BufferedReader(new InputStreamReader(connect.getInputStream()));) {
+			String output;
+			try {
+				while ((output = in.readLine()) != null) {
+					System.out.println(output);
 				}
-			};
-			getConsoleMessage.start();
+			} catch (SocketException e) {
+				System.out.println("Connection Ended");
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -46,8 +45,9 @@ public class ConnectionClient {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		} 
 	}
+
 	public static Socket getSocket() {
 		return connect;
 	}

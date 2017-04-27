@@ -6,6 +6,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.net.SocketException;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -18,26 +19,32 @@ public class ClientGUI extends JFrame {
 		new ClientGUI();
 	}
 	public ClientGUI() {
-		ConnectionClient.start("localhost");
+		Thread client = new Thread() {
+			public void run() {
+				ConnectionClient.start("localhost");
+			}
+		};
+		client.start();
 		setTitle("Messager Client");
 		JTextField input = new JTextField(50);
 		input.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				try {
-					new PrintStream(ConnectionClient.getSocket().getOutputStream()).print(input.getText());
+					new PrintStream(ConnectionClient.getSocket().getOutputStream()).println(input.getText());
+					input.setText("");
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
 			}
 		});
-		add(new JLabel("Weyhoo"));
 		add(input);
 		addWindowListener(new WindowAdapter() {
 			@Override
-			public void windowClosed(WindowEvent arg0) {
+			public void windowClosing(WindowEvent arg0) {
 				try {
 					ConnectionClient.getSocket().close();
+				} catch (SocketException e) {
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
