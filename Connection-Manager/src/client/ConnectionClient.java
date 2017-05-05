@@ -16,12 +16,11 @@ import java.net.UnknownHostException;
  *
  */
 public class ConnectionClient {
-	public static final int PORTNUM = 3576;
-	private static Socket connect;
+	private Socket connect;
 
-	public static void start(String host) {
+	public void start(String host) {
 		try {
-			connect = new Socket(host, PORTNUM);
+			connect = new Socket(host, Constants.PORTNUM);
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
@@ -32,8 +31,7 @@ public class ConnectionClient {
 				while ((output = in.readLine()) != null) {
 					System.out.println(output);
 				}
-			} catch (SocketException e) {
-				System.out.println("Connection Ended");
+			} catch (SocketException e) { //Occurs when socket closed
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -48,7 +46,7 @@ public class ConnectionClient {
 		} 
 	}
 
-	public static Socket getSocket() {
+	public Socket getSocket() {
 		return connect;
 	}
 }
