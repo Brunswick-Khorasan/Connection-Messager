@@ -8,28 +8,25 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.net.SocketException;
 
+import javax.swing.BoxLayout;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 public class ClientGUI extends JFrame {
 	private static final long serialVersionUID = -8332467936477512807L;
 	private ConnectionClient connector;
+	private JTextArea log;
 	public static void main(String[] args) {
 		new ClientGUI();
 	}
 	public ClientGUI() {
-		connector = new ConnectionClient();
-		Thread client = new Thread() {
-			public void run() {
-				connector.start("localhost");
-			}
-		};
-		client.start();
+		connector = new ConnectionClient(this);
 		setTitle("Messager Client");
 		JTextField input = new JTextField(50);
+		log = new JTextArea(40,50);
+		log.setEditable(false);
 		input.addActionListener(new ActionListener() {
-			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				try {
 					new PrintStream(connector.getSocket().getOutputStream()).println(input.getText());
@@ -39,7 +36,10 @@ public class ClientGUI extends JFrame {
 				}
 			}
 		});
+		setLayout(new BoxLayout(this.getContentPane(),BoxLayout.PAGE_AXIS));
+		add(log);
 		add(input);
+		connector.start("localhost");
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent arg0) {
@@ -49,6 +49,8 @@ public class ClientGUI extends JFrame {
 				} catch (SocketException e) {
 				} catch (IOException e) {
 					e.printStackTrace();
+				} catch (NullPointerException e) {
+					e.printStackTrace();
 				}
 				System.exit(0);
 			}
@@ -56,5 +58,7 @@ public class ClientGUI extends JFrame {
 		pack();
 		setVisible(true);
 	}
-	
+	public void addToLog(String message) {
+		log.setText(log.getText() + "\n"+message);
+	}
 }
