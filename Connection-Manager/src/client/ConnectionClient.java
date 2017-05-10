@@ -41,21 +41,25 @@ public class ConnectionClient {
 						public void run() {
 							while (true) {
 								try {
-									gui.addToLog(in.readLine());
+									//gui.addToLog("Listening");
+									while (in.ready()) {
+										gui.addToLog(in.readLine());
+									}
 								} catch (SocketException e) {
 									gui.addToLog("Socket Closed");
-								} catch (IOException e) {e.printStackTrace();}
+									break;
+								} catch (IOException e) {
+									e.printStackTrace();
+								}
 							}
 						}
 					}.run();
 				} catch (UnknownHostException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					gui.addToLog("Unknown Host " + host);
 				} catch (ConnectException e) {
-					System.err.println("The Server is not connected");
+					gui.addToLog("The Server at "+host+" is not connected");
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					gui.addToLog(e.getStackTrace().toString());
 				}
 			}
 		}.start();

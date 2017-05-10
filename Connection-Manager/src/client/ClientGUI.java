@@ -10,8 +10,11 @@ import java.net.SocketException;
 
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.ScrollPaneConstants;
 
 public class ClientGUI extends JFrame {
 	private static final long serialVersionUID = -8332467936477512807L;
@@ -26,6 +29,8 @@ public class ClientGUI extends JFrame {
 		JTextField input = new JTextField(50);
 		log = new JTextArea(40,50);
 		log.setEditable(false);
+		JScrollPane scrollbar = new JScrollPane(log);
+		scrollbar.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		input.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				try {
@@ -37,9 +42,9 @@ public class ClientGUI extends JFrame {
 			}
 		});
 		setLayout(new BoxLayout(this.getContentPane(),BoxLayout.PAGE_AXIS));
-		add(log);
+		add(scrollbar);
 		add(input);
-		connector.start("localhost");
+		connector.start(JOptionPane.showInputDialog(this, "Enter a host"));
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent arg0) {
