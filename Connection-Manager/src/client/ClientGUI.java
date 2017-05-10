@@ -6,7 +6,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.net.SocketException;
 
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
@@ -32,12 +31,21 @@ public class ClientGUI extends JFrame {
 		JScrollPane scrollbar = new JScrollPane(log);
 		scrollbar.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		input.addActionListener(new ActionListener() {
+			boolean nameEntered = false;
 			public void actionPerformed(ActionEvent arg0) {
 				try {
-					new PrintStream(connector.getSocket().getOutputStream()).println(input.getText());
-					input.setText("");
+					String toSpeak = input.getText();
+					if (!nameEntered) {
+						nameEntered = true;
+						setTitle(getTitle() + " - "+toSpeak);
+					}
+					new PrintStream(connector.getSocket().getOutputStream()).println(toSpeak);
 				} catch (IOException e) {
 					e.printStackTrace();
+				} catch (NullPointerException e) {
+					addToLog("Host unknown or server not running");
+				} finally {
+					input.setText("");
 				}
 			}
 		});
@@ -51,13 +59,10 @@ public class ClientGUI extends JFrame {
 				try {
 					new PrintStream(connector.getSocket().getOutputStream()).println("" + Constants.COMMANDCHAR + Constants.CommandCodes.DISCONNECT);
 					connector.getSocket().close();
-				} catch (SocketException e) {
-				} catch (IOException e) {
-					e.printStackTrace();
-				} catch (NullPointerException e) {
-					e.printStackTrace();
+				} catch (Exception e) {
+				} finally {
+					System.exit(0);
 				}
-				System.exit(0);
 			}
 		});
 		pack();

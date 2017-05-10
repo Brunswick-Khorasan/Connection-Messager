@@ -31,7 +31,7 @@ public class ConnectionClient {
 				} catch (ConnectException c) {
 					gui.addToLog("Server not open.");
 				} catch (UnknownHostException e) {
-					e.printStackTrace();
+					gui.addToLog("Host unknown");
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -41,7 +41,6 @@ public class ConnectionClient {
 						public void run() {
 							while (true) {
 								try {
-									//gui.addToLog("Listening");
 									while (in.ready()) {
 										gui.addToLog(in.readLine());
 									}
@@ -60,6 +59,8 @@ public class ConnectionClient {
 					gui.addToLog("The Server at "+host+" is not connected");
 				} catch (IOException e) {
 					gui.addToLog(e.getStackTrace().toString());
+				} catch (NullPointerException e) {
+					gui.addToLog("Printwriter not initialized. Are you connected to a server?");
 				}
 			}
 		}.start();
