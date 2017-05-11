@@ -39,7 +39,7 @@ public class DefaultClientGUI extends JFrame implements ClientGUI {
 				try {
 					new PrintStream(connector.getSocket().getOutputStream()).println("" + Constants.COMMANDCHAR + Constants.CommandCodes.DOWNLOADLOG);
 					String sLog = new BufferedReader(new InputStreamReader(connector.getSocket().getInputStream())).readLine();
-					sLog = sLog.replace('§', '\n');
+					sLog = sLog.replace('¬', '\n');
 					log.setText(sLog);
 				} catch (Exception x) {
 					x.printStackTrace();
