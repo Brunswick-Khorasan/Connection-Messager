@@ -65,7 +65,10 @@ public class ConnectionClient {
 			}
 		}.start();
 	}
-
+	/**
+	 * Get the socket for the connection to read/write from/to
+	 * @return
+	 */
 	public Socket getSocket() {
 		return connect;
 	}
