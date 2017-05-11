@@ -4,11 +4,20 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
 import java.io.PrintStream;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.Queue;
 
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -26,6 +35,24 @@ public class DefaultClientGUI extends JFrame implements ClientGUI {
 		connector = new ConnectionClient(this);
 		setTitle("Messager Client");
 		JTextField input = new JTextField(50);
+		JMenuBar menu = new JMenuBar();
+		JMenu options = new JMenu("Options");
+		JMenuItem getFullLog = new JMenuItem("Display full server log");
+		getFullLog.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					new PrintStream(connector.getSocket().getOutputStream()).println("" + Constants.COMMANDCHAR + Constants.CommandCodes.DOWNLOADLOG);
+					String sLog = new BufferedReader(new InputStreamReader(connector.getSocket().getInputStream())).readLine();
+					sLog = sLog.replace('§', '\n');
+					log.setText(sLog);
+				} catch (Exception x) {
+					x.printStackTrace();
+				}
+			}
+		});
+		options.add(getFullLog);
+		menu.add(options);
+		setJMenuBar(menu);
 		log = new JTextArea(40,50);
 		log.setEditable(false);
 		JScrollPane scrollbar = new JScrollPane(log);
