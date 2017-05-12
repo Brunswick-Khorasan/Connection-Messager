@@ -8,6 +8,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.Scanner;
 
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
@@ -24,11 +26,13 @@ public class DefaultClientGUI extends JFrame implements ClientGUI {
 	private static final long serialVersionUID = -8332467936477512807L;
 	private ConnectionClient connector;
 	private JTextArea log;
+	private ArrayList<String> logText;
 	public static void main(String[] args) {
 		new DefaultClientGUI();
 	}
 	public DefaultClientGUI() {
 		connector = new ConnectionClient(this);
+		logText = new ArrayList<>();
 		setTitle("Messager Client");
 		JTextField input = new JTextField(50);
 		JMenuBar menu = new JMenuBar();
@@ -40,7 +44,12 @@ public class DefaultClientGUI extends JFrame implements ClientGUI {
 					new PrintStream(connector.getSocket().getOutputStream()).println("" + Constants.COMMANDCHAR + Constants.CommandCodes.DOWNLOADLOG);
 					String sLog = new BufferedReader(new InputStreamReader(connector.getSocket().getInputStream())).readLine();
 					sLog = sLog.replace('¬', '\n');
-					log.setText(sLog);
+					Scanner s = new Scanner(sLog);
+					log.setText("");
+					while (s.hasNext()) {
+						addToLog(s.nextLine());
+					}
+					s.close();
 				} catch (Exception x) {
 					x.printStackTrace();
 				}
@@ -92,6 +101,7 @@ public class DefaultClientGUI extends JFrame implements ClientGUI {
 		setVisible(true);
 	}
 	public void addToLog(String message) {
+		logText.add(message);
 		log.setText(log.getText() + "\n"+message);
 	}
 }
